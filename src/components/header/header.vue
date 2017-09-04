@@ -31,6 +31,7 @@
 		<div class="background">
 			<img :src="seller.avatar" width="100%" height="100%" />
 		</div>
+		<transition name="fade">
 		<div class="detail" v-show="detailShow">
 			<div class=" clearfix detail-wrapper">
 				<div class="detail-main">
@@ -38,17 +39,35 @@
 					<div class="star-wrapper">
 						<star :size="48" :score="seller.score"></star>
 					</div>
+					<subTitle content="优惠信息" ></subTitle>
+					<ul v-if="seller.supports" class="supports">
+						<li class="support-item" v-for="(item,index) in seller.supports">
+							<span class="icon" :class="classMap[seller.supports[index].type]"></span>
+							<span class="text">{{seller.supports[index].description}}</span>
+						</li>
+					</ul>
+					<subTitle content="商家公告" ></subTitle>
+					<!-- <div class="title">
+						<div class="line"></div>
+						<div class="text">商家公告</div>
+						<div class="line"></div>
+					</div> -->
+					<div class="bulletin">
+						<p class="content">{{seller.bulletin}}</p>
+					</div>
 				</div>
 			</div>
-			<div class="detail-close">
+			<div class="detail-close" @click="hideDetail">
 				<i class="icon-close"></i>
 			</div>
 		</div>
+		</transition>
 	</div>
 </template>
 
 <script>
 	import star from '../../components/star/star.vue';
+	import subTitle from '../../components/subTitle/subTitle.vue';
 
 	export default{
 		props: {
@@ -64,13 +83,17 @@
 		methods:{
 			showDetail(){
 				this.detailShow = true;
+			},
+			hideDetail(){
+				this.detailShow = false;
 			}
 		},
 		created(){
 			this.classMap = ['decrease','discount','special','invoice','guarantee'];
 		},
 		components:{
-			star
+			star,
+			subTitle
 		}
 
 	};
@@ -196,6 +219,8 @@
 			width:100%
 			height:100%
 			overflow:auto
+			opacity: 1
+			backdrop-filter: blur(10px)
 			background:rgba(7,17,27,0.8)
 			top:0
 			left:0
@@ -214,6 +239,44 @@
 						margin-top:18px
 						padding:2px 0
 						text-align:center
+					.supports
+						width:80%
+						margin:0 auto
+						.support-item
+							padding:0 12px
+							margin-bottom:12px
+							font-size:0
+							&:last-child
+								margin-bottom:0
+							.text
+								line-height:16px
+								font-size:12px
+							.icon
+								display:inline-block
+								width:16px
+								height:16px
+								vertical-align:top
+								margin-right:6px
+								background-size:16px 16px
+								background-repeat:no-repeat
+								&.decrease
+									bg-image('decrease_2')
+								&.discount
+									bg-image('discount_2')
+								&.guarantee
+									bg-image('guarantee_2')
+								&.invoice
+									bg-image('invoice_2')
+								&.special
+									bg-image('special_2')
+					.bulletin
+						width:80%
+						margin:0 auto
+						.content
+							padding: 0 12px
+							font-size:12px
+							line-height:16px
+
 			.detail-close
 				position:relative
 				width:32px
@@ -221,9 +284,6 @@
 				margin:-64px auto
 				clear:both
 				font-size:32px
-
-
-
 
 
 
